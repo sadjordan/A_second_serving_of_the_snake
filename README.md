@@ -20,13 +20,14 @@ How to run:
 - Download necessary modules and prepare the stuff needed.
 - Create a discord server (or use an existing one)
 - Designate a channel for the sending of the attendance qr code link
-- Place the requested info into the json file (id, password, api token, channel id
+- Place the requested info into the json file (id, password, api token, channel id)
 - Run
 - Paste link into the designated channel
 - Watch as magic happens (or sleep, but even I wouldn't trust my programs)
 
-Note:
+Notes:
 - Won't stay online if the computer goes to sleep
+- Channel ID is a number
 
 Modules:
 selenium
