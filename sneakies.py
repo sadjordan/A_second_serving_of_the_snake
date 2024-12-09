@@ -148,7 +148,7 @@ async def on_message(message):
     channel_id = message.channel.id
     attendance(Student_ID, Password, message_content, channel_id)
     
-    print("Testing")
+    #print("Testing")
     
     if message.attachments:  # If there are attachments
         for attachment in message.attachments:
