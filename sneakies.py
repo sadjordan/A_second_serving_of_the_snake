@@ -7,6 +7,7 @@ import json
 from pyzbar.pyzbar import decode, ZBarSymbol
 from PIL import Image
 import cv2
+from cv2 import cv2
 
 with open('sneakies_info.json', 'r') as file:
     data = json.load(file)
@@ -104,15 +105,17 @@ def qr_code(filename):
     except Exception as e:
         print(f"Error opening image: {e}")
         return 0
-
-    decoded_objects = decode(image)
     
-    print(decoded_objects)
+    
+    detector = cv2.QRCodeDetector()
+
+    link, trash, moretrash = detector.detectAndDecode(image)
+    
+    print(link)
 
     # Print the decoded data
-    if decoded_objects:
-        for obj in decoded_objects:
-            print(f"Detected QR Code: {obj.data.decode('utf-8')}")
+    if link != '':
+        print(f"Detected QR Code: {obj.data.decode('utf-8')}")
         return 1
     else:
         return 0
