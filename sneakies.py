@@ -4,10 +4,10 @@ from selenium.webdriver.common.by import By
 from time import sleep
 import discord
 import json
-from pyzbar.pyzbar import decode, ZBarSymbol
+from pyzbar.pyzbar import decode
 from PIL import Image
 import cv2
-from cv2 import cv2
+import os
 
 with open('sneakies_info.json', 'r') as file:
     data = json.load(file)
@@ -96,9 +96,22 @@ def qr_code(filename):
     
     # Load the QR code image
     image_path = f"/Users/jordan/Desktop/The_Grand_Archive/Projects/A_second_serving_of_the_snake/qr_codes/{filename}"
+    #/Users/jordan/Desktop/The_Grand_Archive/Projects/A_second_serving_of_the_snake/qr_codes/220px-QR_code_for_mobile_English_Wikipedia.png
+    #/Users/jordan/Desktop/The_Grand_Archive/Projects/A_second_serving_of_the_snake/qr_codes/220px-QR_code_for_mobile_English_Wikipedia.png
+    
+    '''if os.path.exists(image_path):
+        print("File exists!")
+    else:
+        print("File not found!")'''
+        
     try:
         image = cv2.imread(image_path)
-        print("works")
+        #b,g,r = cv2.split(image)
+        #cv2.imshow("B", b)
+        #cv2.imshow("G", g)
+        #cv2.imshow("R", r)
+        #cv2.imshow("Image", image)
+        #print(image_path)
         if image is None:
             print(f"Image not found: {image_path}")
             return 0
@@ -107,16 +120,18 @@ def qr_code(filename):
         return 0
     
     
-    detector = cv2.QRCodeDetector()
+    #detector = cv2.QRCodeDetector()
+    #print (detector)
 
-    link, trash, moretrash = detector.detectAndDecode(image)
+    #link, trash, moretrash = detector.detectAndDecode(a)
     
-    print(link)
-
-    # Print the decoded data
+    detector = cv2.QRCodeDetector()
+    #print (detector)
+    link, trash, moretrash = detector.detectAndDecode(image)
+    #print(link)
     if link != '':
-        print(f"Detected QR Code: {obj.data.decode('utf-8')}")
-        return 1
+        print(f"Detected QR Code: {link}")
+        return link
     else:
         return 0
 
@@ -145,8 +160,8 @@ async def on_message(message):
                 
                 qr_run = qr_code(attachment.filename)
                 channel = client.get_channel(channel_id)
-                if qr_run == 1:
-                    await channel.send("It works!")
+                if qr_run != 0:
+                    await channel.send(qr_run)
                 else:
                     await channel.send("Link could not be read from QR code")
             else:
