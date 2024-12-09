@@ -4,9 +4,14 @@ from selenium.webdriver.common.by import By
 from time import sleep
 import discord
 import json
+from pyzbar.pyzbar import decode, ZBarSymbol
+from PIL import Image
+import cv2
 
 with open('sneakies_info.json', 'r') as file:
     data = json.load(file)
+    
+#print(data)
 
 Student_ID = data['Student_ID']
 Password = data['Password']
@@ -26,8 +31,10 @@ def attendance(Student_ID, Password, Link, Channel_ID):
     
     if Link[0:85] == "https://osc.mmu.edu.my/psc/csprd/EMPLOYEE/SA/c/N_PUBLIC.N_CLASS_QRSTUD_ATT.GBL?&GUID=":
         print('Attendance QR code')
+        title = "Attendance Signin"
     elif Link == "https://clic.mmu.edu.my/psp/csprd/?cmd=login&languageCd=ENG&":
         print('CLiC')
+        title =  "CLiC Sign-In" 
     elif Link == "https://online.mmu.edu.my/":
         print("MMU Online Portal")
         #remnant of a failed feature
@@ -36,14 +43,11 @@ def attendance(Student_ID, Password, Link, Channel_ID):
         print(f"{Link} is an Invalid URL!")
         return 0
     
-    driver = webdriver.Chrome(options=options)
-    
-
-    title = driver.title
 
     #assert "CLiC Sign-In" in title
     
     if title == "CLiC Sign-In":
+        driver = webdriver.Chrome(options=options)
         driver.get(Link)
         sleep(3)
         
@@ -57,12 +61,12 @@ def attendance(Student_ID, Password, Link, Channel_ID):
     elif title == "Attendance Signin":
         print("In progress")
         
-        guid = Link[85:122]
+        #guid = Link[85:121]
+        #print(f'guid: {guid}')
         
-        
-        driver.get(f"https://osc.mmu.edu.my/psc/csprd/EMPLOYEE/SA/c/N_PUBLIC.N_CLASS_QRSTUD_ATT.GBL?&GUID={guid}")
-        sleep(3)
-        
+        driver = webdriver.Chrome(options=options)
+        driver.get(Link)
+        sleep(2)
     
         driver.find_element(By.ID, "N_QRCODE_DRV_USERID").send_keys(Student_ID)
         driver.find_element(By.ID, "N_QRCODE_DRV_PASSWORD").send_keys(Password)
@@ -85,6 +89,34 @@ def attendance(Student_ID, Password, Link, Channel_ID):
     #driver.quit()
 #####################################################################################
 
+
+def qr_code(filename):
+    print("In development")
+    
+    # Load the QR code image
+    image_path = f"/Users/jordan/Desktop/The_Grand_Archive/Projects/A_second_serving_of_the_snake/qr_codes/{filename}"
+    try:
+        image = cv2.imread(image_path)
+        print("works")
+        if image is None:
+            print(f"Image not found: {image_path}")
+            return 0
+    except Exception as e:
+        print(f"Error opening image: {e}")
+        return 0
+
+    decoded_objects = decode(image)
+    
+    print(decoded_objects)
+
+    # Print the decoded data
+    if decoded_objects:
+        for obj in decoded_objects:
+            print(f"Detected QR Code: {obj.data.decode('utf-8')}")
+        return 1
+    else:
+        return 0
+
 intents = discord.Intents.default()
 intents.message_content = True  # Allows your bot to read message content (use with caution)
 
@@ -97,7 +129,26 @@ async def on_message(message):
     message_content = message.content
     channel_id = message.channel.id
     attendance(Student_ID, Password, message_content, channel_id)
-
+    
+    print("Testing")
+    
+    if message.attachments:  # If there are attachments
+        for attachment in message.attachments:
+            if attachment.filename.lower().endswith((".png", ".jpg", ".jpeg", ".gif")):  # Check if it's an image
+                print(f"Image detected: {attachment.filename} (URL: {attachment.url})")
+                # You can download or process the image here if needed
+                await attachment.save(f"/Users/jordan/Desktop/The_Grand_Archive/Projects/A_second_serving_of_the_snake/qr_codes/{attachment.filename}")  # Save the attachment locally
+                print(f"Image saved as: /Users/jordan/Desktop/The_Grand_Archive/Projects/A_second_serving_of_the_snake/qr_codes/{attachment.filename}")
+                
+                qr_run = qr_code(attachment.filename)
+                channel = client.get_channel(channel_id)
+                if qr_run == 1:
+                    await channel.send("It works!")
+                else:
+                    await channel.send("Link could not be read from QR code")
+            else:
+                print(f"Non-image attachment detected: {attachment.filename} (URL: {attachment.url})")
+    
 if __name__ == "__main__":
     client.run(API_TOKEN)
     

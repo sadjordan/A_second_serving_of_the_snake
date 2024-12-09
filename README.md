@@ -1,4 +1,4 @@
-sneakies V1.0
+sneakies V1.1
 by Jordan
 
 "To exist is to survive unfair choices"
