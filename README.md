@@ -13,6 +13,7 @@ get the email thing to work)
 - Helps you maintain an unconventional sleep schedule
 - Does not save you from those lecturers who do things manually
 - Does not help you attend class
+- QR code detection (in development)
 - Malaysia recorded 1087 deaths by suicide in 2023
 - If you would like to help, consider donating to Befrienders at https://www.befrienders.org.my/donate
 
