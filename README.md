@@ -1,4 +1,4 @@
-sneakies V1.1
+sneakies V1.2
 by Jordan
 
 "To exist is to survive unfair choices"
@@ -16,6 +16,7 @@ get the email thing to work)
 - QR code detection (in development)
 - Malaysia recorded 1087 deaths by suicide in 2023
 - If you would like to help, consider donating to Befrienders at https://www.befrienders.org.my/donate
+- Lots of random quotes if you type in certain keywords
 
 How to run:
 - Download necessary modules and prepare the stuff needed.
